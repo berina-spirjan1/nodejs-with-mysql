@@ -87,7 +87,6 @@ router.get("/lista-zaposlenika", function (req, res, next) {
         console.error("Error executing query:", queryErr);
         return res.status(500).json({ error: "Internal Server Error" });
       }
-      dbConnection.commit();
       res.status(200).json({ status: 200, data: results });
     }
   );
@@ -149,8 +148,6 @@ router.get("/kursna-lista-sp", async (req, res, next) => {
                       "Exchange rate list for the specified date already exists in the database.",
                   });
                 }
-                dbConnection.rollback();
-                return;
               }
 
               responseData.CurrencyExchangeItems.map((value) => {
