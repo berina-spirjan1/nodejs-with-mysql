@@ -67,7 +67,9 @@ router.get("/kursna-lista", async (req, res, next) => {
           dbConnection.commit();
         }
       );
-      res.status(200).json({ message: "Successfully inserted data." });
+      res
+        .status(200)
+        .json({ message: "Successfully inserted data.", status: 200 });
     } else {
       res.status(500).json({ error: "Failed to fetch data." });
     }
@@ -75,6 +77,21 @@ router.get("/kursna-lista", async (req, res, next) => {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Internal Server Error." });
   }
+});
+
+router.get("/lista-zaposlenika", function (req, res, next) {
+  dbConnection.connect();
+  dbConnection.query(
+    "SELECT * FROM zaposlenik_v2",
+    function (queryErr, results) {
+      if (queryErr) {
+        console.error("Error executing query:", queryErr);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      dbConnection.commit();
+      res.status(200).json({ status: 200, data: results });
+    }
+  );
 });
 
 module.exports = router;
