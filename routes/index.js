@@ -76,7 +76,6 @@ router.get("/kursna-lista", async (req, res, next) => {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Internal Server Error." });
   }
-  dbConnection.close();
 });
 
 router.get("/lista-zaposlenika", function (req, res, next) {
@@ -230,7 +229,7 @@ router.get("/proc-povratni-rezultat/:x", (req, res) => {
         }
 
         const result = selectResults[0].result;
-        res.status(200).json({ result });
+        res.status(200).json({ result, status: 200 });
       }
     );
   });
