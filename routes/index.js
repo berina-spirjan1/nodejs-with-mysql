@@ -30,7 +30,6 @@ router.get("/kursna-lista", async (req, res, next) => {
     if (response.status === 200) {
       const { data: responseData } = response;
       dbConnection.connect();
-      console.log("responseData", responseData);
 
       const date = new Date(responseData.Date.slice(0, 10));
       const data = {
@@ -47,7 +46,7 @@ router.get("/kursna-lista", async (req, res, next) => {
 
           const exchangeRatesId = results.insertId;
 
-          for (const value of responseData.CurrencyExchangeItems) {
+          responseData.CurrencyExchangeItems.map((value) => {
             dbConnection.query(
               "INSERT INTO kurs_valute (kursna_lista_id, oznaka_valute, kod_valute, jedinica, kupovni_kurs, srednji_kurs, prodajni_kurs) VALUES (?, ?, ?, ?, ?, ?, ?)",
               [
@@ -63,7 +62,7 @@ router.get("/kursna-lista", async (req, res, next) => {
                 if (error) throw error;
               }
             );
-          }
+          });
           dbConnection.commit();
         }
       );
@@ -156,7 +155,7 @@ router.get("/kursna-lista-sp", async (req, res, next) => {
                 return;
               }
 
-              for (const value of responseData.CurrencyExchangeItems) {
+              responseData.CurrencyExchangeItems.map((value) => {
                 dbConnection.query(
                   "INSERT INTO kurs_valute (kursna_lista_id, oznaka_valute, kod_valute, jedinica, kupovni_kurs, srednji_kurs, prodajni_kurs) VALUES (?, ?, ?, ?, ?, ?, ?)",
                   [
@@ -177,7 +176,7 @@ router.get("/kursna-lista-sp", async (req, res, next) => {
                     }
                   }
                 );
-              }
+              });
 
               dbConnection.commit();
               res.status(200).json({
