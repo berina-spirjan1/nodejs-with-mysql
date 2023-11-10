@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2");
+require("dotenv").config();
 
 const databaseConfig = {
   host: process.env.DB_HOST,
@@ -9,6 +10,8 @@ const databaseConfig = {
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
 };
+
+console.log("databaseConfig", process.env);
 
 const pool = mysql.createPool(databaseConfig);
 
