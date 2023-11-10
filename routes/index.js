@@ -5,13 +5,20 @@ require("dotenv").config();
 
 const router = express.Router();
 
-const connection = mysql.createConnection({
+const dbConnection = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   port: process.env.DB_PORT,
 });
+
+function convertStrToNum(v) {
+  if (v === "") {
+    return null;
+  }
+  return v.replace(",", ".");
+}
 
 router.get("/", async (req, res, next) => {
   try {
@@ -22,7 +29,8 @@ router.get("/", async (req, res, next) => {
 
     if (response.status === 200) {
       const { data: responseData } = response;
-      connection.connect();
+      dbConnection.connect();
+      console.log("responseData", responseData);
 
       const date = new Date(responseData.Date.slice(0, 10));
       const data = {
@@ -31,7 +39,7 @@ router.get("/", async (req, res, next) => {
         number: responseData.Number,
       };
 
-      connection.query(
+      dbConnection.query(
         "INSERT INTO kursna_lista (datum_kursne_liste, godina, broj_kursne_liste) VALUES (?, ?, ?)",
         [data.date, data.year, data.number],
         function (error, results) {
@@ -40,24 +48,23 @@ router.get("/", async (req, res, next) => {
           const exchangeRatesId = results.insertId;
 
           for (const value of responseData.CurrencyExchangeItems) {
-            connection.query(
+            dbConnection.query(
               "INSERT INTO kurs_valute (kursna_lista_id, oznaka_valute, kod_valute, jedinica, kupovni_kurs, srednji_kurs, prodajni_kurs) VALUES (?, ?, ?, ?, ?, ?, ?)",
               [
                 exchangeRatesId,
                 value.AlphaCode,
                 value.NumCode,
                 value.Units,
-                Number(value.Buy),
-                Number(value.Middle),
-                Number(value.Sell),
+                convertStrToNum(value.Buy),
+                convertStrToNum(value.Middle),
+                convertStrToNum(value.Sell),
               ],
               function (error) {
                 if (error) throw error;
               }
             );
           }
-
-          connection.end();
+          dbConnection.commit();
         }
       );
       res.status(200).json({ message: "Successfully inserted data." });
