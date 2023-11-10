@@ -77,6 +77,7 @@ router.get("/kursna-lista", async (req, res, next) => {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Internal Server Error." });
   }
+  dbConnection.close();
 });
 
 router.get("/lista-zaposlenika", function (req, res, next) {
@@ -92,6 +93,7 @@ router.get("/lista-zaposlenika", function (req, res, next) {
       res.status(200).json({ status: 200, data: results });
     }
   );
+  dbConnection.close();
 });
 
 router.get("/kursna-lista-sp", async (req, res, next) => {
@@ -193,6 +195,7 @@ router.get("/kursna-lista-sp", async (req, res, next) => {
     console.error("Error:", error.message);
     res.status(500).json({ error: "Internal Server Error." });
   }
+  dbConnection.close();
 });
 
 router.get("/proc-vise-datasetova", (req, res) => {
@@ -206,10 +209,10 @@ router.get("/proc-vise-datasetova", (req, res) => {
         return res.status(500).json({ error: "Internal Server Error" });
       }
 
-      const datasets = results[0];
-      res.status(200).json({ datasets });
+      res.status(200).json({ data: results[1], employee: results[0] });
     }
   );
+  dbConnection.close();
 });
 
 router.get("/proc-povratni-rezultat/:x", (req, res) => {
@@ -235,6 +238,7 @@ router.get("/proc-povratni-rezultat/:x", (req, res) => {
       }
     );
   });
+  dbConnection.close();
 });
 
 module.exports = router;
