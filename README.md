@@ -8,7 +8,7 @@ Before running the project, make sure to install all required libraries by runni
 npm install
 ```
 
-##Usage
+## Usage
 Run the project using the following command:
 
 ```bash
