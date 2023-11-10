@@ -1,9 +1,5 @@
 # NodeJS with MYSQL
 
-## Description
-
-Briefly describe your project here.
-
 ## Installation
 
 Before running the project, make sure to install all required libraries by running the following command:
