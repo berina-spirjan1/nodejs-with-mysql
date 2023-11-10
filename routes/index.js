@@ -195,4 +195,46 @@ router.get("/kursna-lista-sp", async (req, res, next) => {
   }
 });
 
+router.get("/proc-vise-datasetova", (req, res) => {
+  dbConnection.connect();
+  dbConnection.query(
+    "CALL vrati_podatke_zaposlenika(?)",
+    [1],
+    (error, results) => {
+      if (error) {
+        console.error("Error executing procedure:", error);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+
+      const datasets = results[0];
+      res.status(200).json({ datasets });
+    }
+  );
+});
+
+router.get("/proc-povratni-rezultat/:x", (req, res) => {
+  const x = req.params.x;
+
+  dbConnection.connect();
+  dbConnection.query("CALL sp_kvadrat(?, @rezultat)", [x], (error, results) => {
+    if (error) {
+      console.error("Error executing procedure:", error);
+      return res.status(500).json({ error: "Internal Server Error" });
+    }
+
+    dbConnection.query(
+      "SELECT @rezultat as result",
+      (selectError, selectResults) => {
+        if (selectError) {
+          console.error("Error fetching result:", selectError);
+          return res.status(500).json({ error: "Internal Server Error" });
+        }
+
+        const result = selectResults[0].result;
+        res.status(200).json({ result });
+      }
+    );
+  });
+});
+
 module.exports = router;
