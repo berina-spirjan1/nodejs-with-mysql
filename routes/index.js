@@ -20,7 +20,7 @@ function convertStrToNum(v) {
   return v.replace(",", ".");
 }
 
-router.get("/", async (req, res, next) => {
+router.get("/kursna-lista", async (req, res, next) => {
   try {
     const response = await axios.get(
       "https://cbbh.ba/CurrencyExchange/GetJson?date=" +
